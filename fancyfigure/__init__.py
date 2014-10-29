@@ -133,17 +133,28 @@ class FancyfigureDirective(Directive):
                     render['size']
                 )
                 for line in render['content']:
-                    if '@' in line:
-                        parts = line.split('@')
-                        pos = parts.pop()
-                        text = '@'.join(parts)
-                        x,y = pos.split(',')
+                    m = re.match('(.+)\s*@(\d+),(\d+)(\s+#(\d+))?$', line.strip())
+                    if m is not None:
+                        text = self._substitute_vars(m.group(1))
+                        x = m.group(2)
+                        y = m.group(3)
+
+                        # truncate string
+                        if m.group(4) is not None:
+                            maxlen = int(m.group(5))
+                            if len(text) > maxlen:
+                                text = text[0:maxlen] + '...'
+
                         draw.text(
                             (int(x), int(y)),
-                            self._substitute_vars(text.strip()),
+                            text,
                             font=font,
                             fill=render['color']
                         )
+                    elif not line.strip() == '':
+                        env.app.warn('fancyfigure: Invalid text label for %s: %s' % (
+                            self.arguments[0], line
+                        ))
 
             # save rendered image
             img.save(render_path)
@@ -256,17 +267,17 @@ def copy_stylesheet(app, exception=None):
         os.makedirs(path)
 
     app.info('Copying fancybox stylesheets... ', nonl=True)
-    for FILE in CSS_FILES:
+    for file in CSS_FILES:
         copyfile(
-            os.path.join(os.path.dirname(__file__), FILE),
-            os.path.join(base_path, FILE)
+            os.path.join(os.path.dirname(__file__), file),
+            os.path.join(base_path, file)
         )
     app.info('done')
     app.info('Copying fancybox javascript... ', nonl=True)
-    for FILE in JS_FILES:
+    for file in JS_FILES:
         copyfile(
-            os.path.join(os.path.dirname(__file__), FILE),
-            os.path.join(base_path, FILE)
+            os.path.join(os.path.dirname(__file__), file),
+            os.path.join(base_path, file)
         )
     app.info('done')
 

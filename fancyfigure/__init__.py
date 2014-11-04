@@ -60,6 +60,11 @@ class FancyrenderDirective(Directive):
             'opensans-bold': 'OpenSans-Bold.ttf',
             'opensans-light': 'OpenSans-Light.ttf',
             'opensans-semibold': 'OpenSans-Semibold.ttf',
+            'roboto': 'Roboto-Regular.ttf',
+            'roboto-bold': 'Roboto-Bold.ttf',
+            'roboto-black': 'Roboto-Black.ttf',
+            'roboto-medium': 'Roboto-Medium.ttf',
+            'roboto-light': 'Roboto-Light.ttf',
         }
 
         font = self.options.get('font', 'verdana')
